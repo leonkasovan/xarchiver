@@ -24,6 +24,6 @@
 #include <glib.h>
 #include "archive.h"
 
-XArchive *xa_new_archive_dialog(gchar *, XArchive *[]);
+XArchive *xa_new_archive_dialog(gint argc, gchar *, XArchive *[]);
 
 #endif

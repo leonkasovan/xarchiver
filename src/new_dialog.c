@@ -123,7 +123,7 @@ static void xa_change_archive_extension (GtkComboBox *combo_box, GtkWidget *xa_f
 	g_free(file);
 }
 
-XArchive *xa_new_archive_dialog (gchar *path, XArchive *archive_open[])
+XArchive *xa_new_archive_dialog (gint argc, gchar *path, XArchive *archive_open[])
 {
 	GTK_COMPAT_TOOLTIPS;
 	const int XA_RESPONSE_CREATE = 1;
@@ -199,12 +199,12 @@ XArchive *xa_new_archive_dialog (gchar *path, XArchive *archive_open[])
 	gtk_widget_set_sensitive(create, *(char *) suffix != 0);
 	g_signal_connect(G_OBJECT(combo_box), "changed", G_CALLBACK(xa_change_archive_extension), xa_file_chooser);
 
-	if (path != NULL)
+	if (argc == 1)
 	{
 		basepath = g_path_get_basename (path);
 		filename = g_strconcat(basepath, suffix, NULL);
 
-		current_dir = g_get_current_dir ();
+		current_dir = g_path_get_dirname (path);
 		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (xa_file_chooser),current_dir);
 
 		g_free (basepath);
@@ -212,8 +212,19 @@ XArchive *xa_new_archive_dialog (gchar *path, XArchive *archive_open[])
 	}
 	else
 	{
-		filename = g_strdup(suffix);
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(xa_file_chooser), ".");
+		if (path) {
+			current_dir = g_path_get_dirname(path);
+			basepath = g_path_get_basename (current_dir);
+			filename = g_strconcat(basepath, suffix, NULL);
+			g_free (basepath);
+		} else {
+			current_dir = g_strdup(".");
+			filename = g_strdup(suffix);
+		}
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(xa_file_chooser), current_dir);
+		xa_show_message_dialog(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "path", "Path is NULL");
+		xa_show_message_dialog(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "filename", filename);
+		g_free (current_dir);
 	}
 
 	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(xa_file_chooser), filename);

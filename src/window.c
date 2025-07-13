@@ -997,7 +997,7 @@ void xa_new_archive (GtkMenuItem *menuitem,gpointer user_data)
 	if (idx == -1)
 		return;
 
-	archive[idx] = xa_new_archive_dialog(NULL, archive);
+	archive[idx] = xa_new_archive_dialog(0, NULL, archive);
 
 	if (archive[idx] == NULL)
 		return;
@@ -2449,7 +2449,7 @@ failed:
 			if (idx == -1)
 				goto failed;
 
-			archive[idx] = xa_new_archive_dialog(NULL, archive);
+			archive[idx] = xa_new_archive_dialog(0, NULL, archive);
 
 			if (!archive[idx])
 				goto failed;
